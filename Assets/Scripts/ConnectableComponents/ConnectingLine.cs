@@ -4,7 +4,9 @@
 public class ConnectingLine : MonoBehaviour
 {
     private LineRenderer _lineRenderer;
-    private Transform _startTransform, _endTransform; 
+    private Transform _startTransform, _endTransform;
+    private Vector3 _mouseFollowingPosition;
+    private bool _needToFollowMouse;
 
     private void Awake() {
         _lineRenderer = GetComponent<LineRenderer>();
@@ -20,10 +22,21 @@ public class ConnectingLine : MonoBehaviour
         _endTransform = endTransform;
     }
 
+    public void SetEndPoint(Vector3 endPosition, bool needToFollowMouse) {
+        _mouseFollowingPosition = endPosition;
+        _needToFollowMouse = needToFollowMouse;
+    }
+
     private void Update() {
-        if (_startTransform == null || _endTransform == null) return;
+        if (_startTransform != null) {
+            _lineRenderer.SetPosition(0, _startTransform.position);
+        }
+
+        if (_needToFollowMouse) {
+            _lineRenderer.SetPosition(1, _mouseFollowingPosition);
+        } else {
+            if (_endTransform != null) { _lineRenderer.SetPosition(1, _endTransform.position); }
+        }
         
-        _lineRenderer.SetPosition(0, _startTransform.position);
-        _lineRenderer.SetPosition(1, _endTransform.position);
     }
 }

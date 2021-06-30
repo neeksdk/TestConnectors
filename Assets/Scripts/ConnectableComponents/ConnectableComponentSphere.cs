@@ -1,66 +1,74 @@
-﻿using System;
+﻿using ConnectableStates;
 using UnityEngine;
 
-public class ConnectableComponentSphere : ConnectableComponent
+namespace ConnectableComponents
 {
-    private IConnectableState _connectableStateStatic;
-    private IConnectableState _connectableStateDynamic;
-    private IConnectableState _currentState;
+    public class ConnectableComponentSphere : ConnectableComponent
+    {
+        private IConnectableState _connectableStateStatic;
+        private IConnectableState _connectableStateDynamic;
 
-    private void Start() {
-        _connectableStateStatic = new ConnectableStateStatic(this);
-        _connectableStateDynamic = new ConnectableStateDynamic(this);
-        ChangeState(_connectableStateStatic);
+        private void Start() {
+            _connectableStateStatic = new ConnectableStateStatic(this);
+            _connectableStateDynamic = new ConnectableStateDynamic(this);
+            ChangeState(_connectableStateStatic);
 
-        TestMenu.OnUIPressed += OnUIPressed;
-    }
+            TestMenu.OnUIPressed += OnUIPressed;
+        }
 
-    private void OnDestroy() {
-        TestMenu.OnUIPressed -= OnUIPressed;
-    }
-
-    private void ChangeState(IConnectableState newState) {
-        if (_currentState == newState) return;
+        private void OnDestroy() {
+            TestMenu.OnUIPressed -= OnUIPressed;
+        }
         
-        _currentState?.ExitState();
-        _currentState = newState;
-        _currentState.StartState();
-    }
-    
-    public ConnectingLine GetConnectingLine() {
-        return connectingLine;
-    }
+        public ConnectingLine GetConnectingLine() {
+            return connectingLine;
+        }
 
-    public void SetMaterialColor(Color color) {
-        ConnectableMeshRender.material.color = color;
-    }
+        public void SetMaterialColor(Color color) {
+            ConnectableMeshRender.material.color = color;
+        }
 
-    private void OnMouseDown() {
-        _currentState.OnMouseDown();
-    }
+        private void OnMouseDown() {
+            CurrentState.OnMouseDown();
+        }
 
-    private void OnMouseEnter() {
-        _currentState.OnMouseEnter();
-    }
+        private void OnMouseUp() {
+            CurrentState.OnMouseUp();
+        }
 
-    private void OnMouseExit() {
-        _currentState.OnMouseExit();
-    }
+        private void OnMouseEnter() {
+            CurrentState.OnMouseEnter();
+        }
 
-    private void Update() {
-        _currentState.Update();
-    }
+        private void OnMouseExit() {
+            CurrentState.OnMouseExit();
+        }
 
-    private void OnUIPressed(TestMenu.UICommandType commandType) {
-        switch (commandType) {
-            case TestMenu.UICommandType.Method1:
-                ChangeState(_connectableStateStatic);
-                break;
-            case TestMenu.UICommandType.Method2:
-                ChangeState(_connectableStateDynamic);
-                break;
-            default:
-                break;
+        private void ClearConnection() {
+            connectingLine.SetStartPoint(transform);
+            connectingLine.SetEndPoint(transform);
+        }
+
+        private void Update() {
+            CurrentState.Update();
+        }
+
+        private void OnUIPressed(TestMenu.UICommandType commandType) {
+            switch (commandType) {
+                case TestMenu.UICommandType.Method1:
+                    ChangeState(_connectableStateStatic);
+                    break;
+                case TestMenu.UICommandType.Method2:
+                    ChangeState(_connectableStateDynamic);
+                    break;
+                case TestMenu.UICommandType.ClearConnections:
+                    ClearConnection();
+                    break;
+                case TestMenu.UICommandType.Randomize:
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

@@ -7,11 +7,16 @@ public class TestMenu : MonoBehaviour
     {
         Randomize,
         Method1,
-        Method2
+        Method2,
+        ClearConnections
     }
 
     public static Action<UICommandType> OnUIPressed = delegate { };
 
+    public void ClearConnections() {
+        OnUIPressed(UICommandType.ClearConnections);
+    }
+    
     public void RandomizePressed() {
         OnUIPressed(UICommandType.Randomize);
     }
