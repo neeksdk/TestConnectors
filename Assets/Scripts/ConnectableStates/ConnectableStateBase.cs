@@ -9,6 +9,7 @@ namespace ConnectableStates
         protected static Action<ConnectableComponentSphere> OnSphereSelected = delegate { };
         protected bool ConnectionModeIsOn;
         protected static ConnectingLine ConnectingLine;
+        protected static bool MouseIsOnConnectableComponent;
 
         protected ConnectableStateBase(ConnectableComponentSphere componentSphere) {
             ConnectableComponentSphereRef = componentSphere;

@@ -22,10 +22,10 @@ public class Main : MonoBehaviour
 
     private void GenerateCollectablesOnScene() {
         _connectables = new ConnectableContainer[Constants.GENERATED_PREFABS_COUNT];
-
+        
         for (int i = 0; i < Constants.GENERATED_PREFABS_COUNT; i++) {
             GameObject ConnectableGameObject = Instantiate(connetablePrefab,
-                Vector3.zero, Quaternion.identity, transform);
+                planeArea.position, planeArea.rotation, transform);
             ConnectableGameObject.name = $"ConnectablePrefab_{i:00}";
             _connectables[i] = ConnectableGameObject.GetComponent<ConnectableContainer>();
         }
@@ -34,9 +34,9 @@ public class Main : MonoBehaviour
     }
 
     private void RandomizeCollectablePositions() {
+        Vector3 PlaneAreaNormal = planeArea.TransformDirection(-Vector3.up);
         foreach (ConnectableContainer ConnectableInterface in _connectables) {
-            Vector2 RandomPosition = Random.insideUnitCircle * Radius;
-            ConnectableInterface.SetPosition(new Vector3(RandomPosition.x, 0 ,RandomPosition.y));
+            ConnectableInterface.SetPosition(RandomPointOnPlane(planeArea.position, PlaneAreaNormal, Radius));
         }
     }
 
@@ -49,12 +49,25 @@ public class Main : MonoBehaviour
         Camera MainCamera = Camera.main;
 
         if (MainCamera is null) return;
-
-        MainCamera.transform.position = new Vector3(0, Radius * 2, -Radius);
+        
+        MainCamera.transform.rotation = planeArea.transform.rotation;
+        MainCamera.transform.position = planeArea.transform.position;
+        
+        MainCamera.transform.Translate(new Vector3(0, Radius * 2, -Radius));
         MainCamera.transform.LookAt(planeArea);
     }
     
     private void OnUIPressed(TestMenu.UICommandType commandType) {
         if (commandType == TestMenu.UICommandType.Randomize) RandomizeCollectablePositions();
+    }
+    
+    private static Vector3 RandomPointOnPlane(Vector3 position, Vector3 normal, float radius)
+    {
+        Vector3 RandomPoint = Vector3.Cross(Random.insideUnitSphere, normal);
+        RandomPoint.Normalize();
+        RandomPoint *= Random.Range(0f, radius);
+        RandomPoint += position;
+       
+        return RandomPoint;
     }
 }

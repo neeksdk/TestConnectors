@@ -7,8 +7,6 @@ namespace ConnectableStates
         internal ConnectableStateStatic(ConnectableComponentSphere componentSphere) :
             base(componentSphere: componentSphere) { }
 
-        private static bool _mouseIsOnConnectableComponent;
-
         public override void StartState() {
             OnSphereSelected += ConnectableMode;
         }
@@ -24,27 +22,19 @@ namespace ConnectableStates
                 ConnectingLine = ConnectableComponentSphereRef.GetConnectingLine();
                 ConnectingLine.SetStartPoint(ConnectableComponentSphereRef.transform);
                 ConnectingLine.SetEndPoint(ConnectableComponentSphereRef.transform);
+            } else {
+                if (ConnectionModeIsOn) ConnectingLine.SetEndPoint(ConnectableComponentSphereRef.transform);
             }
 
             OnSphereSelected(ConnectableComponentSphereRef);
         }
 
         public override void OnMouseEnter() {
-            _mouseIsOnConnectableComponent = true;
-
-            if (ConnectionModeIsOn) {
-                ConnectableComponentSphereRef.SetMaterialColor(Constants.SELECTED_CONNECTABLE_ACTIVE_COLOR);
-            }
+            MouseIsOnConnectableComponent = true;
         }
 
         public override void OnMouseExit() {
-            _mouseIsOnConnectableComponent = false;
-
-            if (ConnectionModeIsOn) {
-                ConnectableComponentSphereRef.SetMaterialColor(IsSameConnectingLine()
-                    ? Constants.SELECTED_CONNECTABLE_ACTIVE_COLOR
-                    : Constants.SELECTED_CONNECTABLE_INACTIVE_COLOR);
-            }
+            MouseIsOnConnectableComponent = false;
         }
 
         private void ConnectableMode(ConnectableComponentSphere connectableSphereClicked) {
@@ -58,10 +48,6 @@ namespace ConnectableStates
             if (ConnectionModeIsOn) {
                 ConnectionModeIsOn = false;
                 ConnectableComponentSphereRef.SetMaterialColor(Constants.CONNECTABLE_DEFAULT_COLOR);
-
-                if (connectableSphereClicked == ConnectableComponentSphereRef) {
-                    ConnectingLine.SetEndPoint(ConnectableComponentSphereRef.transform);
-                }
             } else {
                 ConnectionModeIsOn = true;
                 ConnectableComponentSphereRef.SetMaterialColor(connectableSphereClicked == ConnectableComponentSphereRef
@@ -71,7 +57,7 @@ namespace ConnectableStates
         }
 
         public override void Update() {
-            if (UnityEngine.Input.GetMouseButtonDown(0) && !_mouseIsOnConnectableComponent)
+            if (UnityEngine.Input.GetMouseButtonDown(0) && !MouseIsOnConnectableComponent)
                 OnSphereSelected(null);
         }
     }

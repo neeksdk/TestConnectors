@@ -6,4 +6,5 @@ public static class Constants
     public static readonly Color SELECTED_CONNECTABLE_ACTIVE_COLOR = Color.yellow;
     public static readonly Color SELECTED_CONNECTABLE_INACTIVE_COLOR = Color.blue;
     public static readonly Color CONNECTABLE_DEFAULT_COLOR = Color.white;
+    public const float TIME_FOR_SINGLE_MOUSE_CLICK = 0.2f;
 }

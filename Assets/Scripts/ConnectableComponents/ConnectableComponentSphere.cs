@@ -1,4 +1,5 @@
-﻿using ConnectableStates;
+﻿using System;
+using ConnectableStates;
 using UnityEngine;
 
 namespace ConnectableComponents
@@ -7,11 +8,15 @@ namespace ConnectableComponents
     {
         private IConnectableState _connectableStateStatic;
         private IConnectableState _connectableStateDynamic;
+        private IConnectableState _connectableStateTwoMethods;
+        private IConnectableState _connectableStateNone;
 
         private void Start() {
             _connectableStateStatic = new ConnectableStateStatic(this);
             _connectableStateDynamic = new ConnectableStateDynamic(this);
-            ChangeState(_connectableStateStatic);
+            _connectableStateTwoMethods = new ConnectableStateTwoMethods(this);
+            _connectableStateNone = new ConnectableStateNone(this);
+            ChangeState(_connectableStateTwoMethods);
 
             TestMenu.OnUIPressed += OnUIPressed;
         }
@@ -44,6 +49,10 @@ namespace ConnectableComponents
             CurrentState.OnMouseExit();
         }
 
+        private void OnMouseDrag() {
+            CurrentState.OnMouseDragging();
+        }
+
         private void ClearConnection() {
             connectingLine.SetStartPoint(transform);
             connectingLine.SetEndPoint(transform);
@@ -60,6 +69,12 @@ namespace ConnectableComponents
                     break;
                 case TestMenu.UICommandType.Method2:
                     ChangeState(_connectableStateDynamic);
+                    break;
+                case TestMenu.UICommandType.TwoMethods:
+                    ChangeState(_connectableStateTwoMethods);
+                    break;
+                case TestMenu.UICommandType.NoneMethods:
+                    ChangeState(_connectableStateNone);
                     break;
                 case TestMenu.UICommandType.ClearConnections:
                     ClearConnection();

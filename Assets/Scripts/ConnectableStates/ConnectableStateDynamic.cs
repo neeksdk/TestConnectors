@@ -35,18 +35,19 @@ namespace ConnectableStates
         }
 
         public override void OnMouseEnter() {
-            ConnectableComponentSphereRef.SetMaterialColor(Constants.SELECTED_CONNECTABLE_ACTIVE_COLOR);
+            if (!ConnectionModeIsOn) return;
 
-            if (ConnectionModeIsOn) ConnectingLine.SetEndPoint(ConnectableComponentSphereRef.transform);
+            ConnectingLine.SetEndPoint(ConnectableComponentSphereRef.transform);
+            ConnectableComponentSphereRef.SetMaterialColor(Constants.SELECTED_CONNECTABLE_ACTIVE_COLOR);
         }
 
         public override void OnMouseExit() {
-            if (ConnectionModeIsOn) {
-                ConnectingLine.SetEndPoint(_storedBeforeEnterConnectionMode);
-                if (!IsSameConnectingLine()) {
-                    ConnectableComponentSphereRef.SetMaterialColor(Constants.SELECTED_CONNECTABLE_INACTIVE_COLOR);
-                }
-            } else { ConnectableComponentSphereRef.SetMaterialColor(Constants.CONNECTABLE_DEFAULT_COLOR); }
+            if (!ConnectionModeIsOn) return;
+
+            ConnectingLine.SetEndPoint(_storedBeforeEnterConnectionMode);
+            if (!IsSameConnectingLine()) {
+                ConnectableComponentSphereRef.SetMaterialColor(Constants.SELECTED_CONNECTABLE_INACTIVE_COLOR);
+            }
         }
 
         public override void OnMouseDragging() {
